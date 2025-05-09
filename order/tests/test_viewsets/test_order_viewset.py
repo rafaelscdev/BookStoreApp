@@ -15,7 +15,7 @@ class TestOrderViewSet(APITestCase):
 
     def setUp(self):
         self.user = UserFactory()
-        self.token = Token.objects.create(user=self.user)
+        self.token = Token.objects.get_or_create(user=self.user)[0]
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
         self.category = CategoryFactory(title="technology")
         self.product = ProductFactory(
@@ -33,16 +33,16 @@ class TestOrderViewSet(APITestCase):
 
         order_data = json.loads(response.content)
         self.assertEqual(
-            order_data[0]["products"][0]["title"], self.product.title
+            order_data["results"][0]["products"][0]["title"], self.product.title
         )
         self.assertEqual(
-            order_data[0]["products"][0]["price"], self.product.price
+            order_data["results"][0]["products"][0]["price"], self.product.price
         )
         self.assertEqual(
-            order_data[0]["products"][0]["active"], self.product.active
+            order_data["results"][0]["products"][0]["active"], self.product.active
         )
         self.assertEqual(
-            order_data[0]["products"][0]["categories"][0]["title"],
+            order_data["results"][0]["products"][0]["categories"][0]["title"],
             self.category.title,
         )
 
