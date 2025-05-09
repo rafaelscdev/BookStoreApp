@@ -15,7 +15,7 @@ class TestCategoryViewSet(APITestCase):
 
     def setUp(self):
         self.user = UserFactory()
-        self.token = Token.objects.create(user=self.user)
+        self.token = Token.objects.get_or_create(user=self.user)[0]
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
         self.category = CategoryFactory(title="books")
 
@@ -28,7 +28,7 @@ class TestCategoryViewSet(APITestCase):
         category_data = json.loads(response.content)
 
         self.assertEqual(
-            category_data[0]["title"], 
+            category_data["results"][0]["title"], 
             self.category.title
         )
 

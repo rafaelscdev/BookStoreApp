@@ -15,7 +15,7 @@ class TestProductViewSet(APITestCase):
 
     def setUp(self):
         self.user = UserFactory()
-        self.token = Token.objects.create(user=self.user)
+        self.token = Token.objects.get_or_create(user=self.user)[0]
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
         self.category = CategoryFactory(title="technology")
         self.product = ProductFactory(
@@ -32,20 +32,21 @@ class TestProductViewSet(APITestCase):
 
         product_data = json.loads(response.content)
         self.assertEqual(
-            product_data[0]["title"], self.product.title
+            product_data["results"][0]["title"], self.product.title
         )
         self.assertEqual(
-            product_data[0]["price"], self.product.price
+            product_data["results"][0]["price"], self.product.price
         )
         self.assertEqual(
-            product_data[0]["active"], self.product.active
+            product_data["results"][0]["active"], self.product.active
         )
         self.assertEqual(
-            product_data[0]["categories"][0]["title"],
+            product_data["results"][0]["categories"][0]["title"],
             self.category.title,
         )
 
     def test_create_product(self):
+        category = CategoryFactory()
         data = json.dumps(
             {
                 "title": "keyboard",
