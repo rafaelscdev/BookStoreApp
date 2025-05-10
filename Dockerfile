@@ -44,18 +44,21 @@ RUN apt-get update \
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
 # Install psycopg2
-RUN pip install psycopg2
+RUN apt-get update \
+    && apt-get install libpq-dev gcc \
+    && pip install psycopg2
+
 
 # Copy project requirement files
 WORKDIR $PYSETUP_PATH
 COPY poetry.lock pyproject.toml ./
 
 # Install dependencies
-RUN poetry install --no-interaction --no-ansi
+RUN poetry install --no-interaction --no-ansi --no-root
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY . /app/
+COPY . /usr/src/app/
 
 EXPOSE 8000
 
