@@ -2,8 +2,8 @@ import json
 
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient, APITestCase
 from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient, APITestCase
 
 from order.factories import OrderFactory, UserFactory
 from order.models import Order
@@ -18,16 +18,12 @@ class TestOrderViewSet(APITestCase):
         self.token = Token.objects.get_or_create(user=self.user)[0]
         self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
         self.category = CategoryFactory(title="technology")
-        self.product = ProductFactory(
-            title="mouse", price=100
-        )
+        self.product = ProductFactory(title="mouse", price=100)
         self.product.categories.add(self.category)
         self.order = OrderFactory(products=[self.product])
 
     def test_order(self):
-        response = self.client.get(
-            reverse("order-list", kwargs={"version": "v1"})
-        )
+        response = self.client.get(reverse("order-list", kwargs={"version": "v1"}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

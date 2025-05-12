@@ -1,0 +1,37 @@
+name: Pull Request Checks
+
+on: [pull_request]
+
+jobs:
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install poetry
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install poetry
+
+      - name: Install dependencies
+        run: |
+          poetry env use python3.12
+          poetry install --with dev
+
+      - name: Run Code Quality Checks
+        run: |
+          poetry run flake8 . --format=github
+          poetry run black --check .
+          poetry run isort --check-only .
+
+      - name: Security Check
+        uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          virtual-environment: .venv 

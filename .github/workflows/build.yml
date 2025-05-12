@@ -1,0 +1,74 @@
+name: Python application
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.12']
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    services:
+      postgres:
+        image: postgres:14.0-alpine
+        env:
+          POSTGRES_USER: bookstoreapp_dev
+          POSTGRES_PASSWORD: bookstoreapp_dev
+          POSTGRES_DB: bookstoreapp_dev_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install poetry
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+
+    - name: Configure poetry
+      run: |
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+
+    - name: Cache poetry virtualenv
+      uses: actions/cache@v3
+      id: cache
+      with:
+        path: ./.venv
+        key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: poetry install --with dev
+
+    - name: Run linting
+      run: |
+        poetry run flake8 .
+        poetry run black --check .
+        poetry run isort --check-only .
+
+    - name: Run Tests
+      env:
+        DATABASE_URL: postgresql://bookstoreapp_dev:bookstoreapp_dev@localhost:5432/bookstoreapp_dev_db
+      run: |
+        poetry run python manage.py test 
