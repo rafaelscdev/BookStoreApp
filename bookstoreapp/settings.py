@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -98,16 +99,25 @@ WSGI_APPLICATION = "bookstoreapp.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.environ.get("SQL_DATABASE", "bookstoreapp_dev_db"),
-        "USER": os.environ.get("SQL_USER", "bookstoreapp_dev"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "bookstoreapp_dev"),
-        "HOST": os.environ.get("SQL_HOST", "db"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+if 'test' in sys.argv:
+    # Usa SQLite em memória para rodar os testes no GitHub Actions
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
+            "NAME": os.environ.get("SQL_DATABASE", "bookstoreapp_dev_db"),
+            "USER": os.environ.get("SQL_USER", "bookstoreapp_dev"),
+            "PASSWORD": os.environ.get("SQL_PASSWORD", "bookstoreapp_dev"),
+            "HOST": os.environ.get("SQL_HOST", "db"),
+            "PORT": os.environ.get("SQL_PORT", "5432"),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
