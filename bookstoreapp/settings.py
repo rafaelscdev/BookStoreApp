@@ -107,7 +107,20 @@ if 'test' in sys.argv:
             "NAME": ":memory:",
         }
     }
+elif os.environ.get("PA_ENV") == "production":
+    # Configuração para produção no PythonAnywhere (MySQL)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": "rafaelscorreadev$default",
+            "USER": "rafaelscorreadev",
+            "PASSWORD": "BookStoreApp2025",
+            "HOST": "rafaelscorreadev.mysql.pythonanywhere-services.com",
+            "PORT": "3306",
+        }
+    }
 else:
+    # Configuração padrão para desenvolvimento local (PostgreSQL)
     DATABASES = {
         "default": {
             "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
