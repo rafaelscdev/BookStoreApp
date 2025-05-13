@@ -2,7 +2,16 @@
 
 Bookstore APP from Backend Python course from EBAC
 
-## Prerequisites
+## Tecnologias Utilizadas
+
+- Python 3.12+
+- Django
+- Poetry (Gerenciador de dependências)
+- Docker & Docker Compose
+- PostgreSQL
+- Make (opcional, mas recomendado)
+
+## Pré-requisitos
 
 ```
 Python 3.12+
@@ -10,6 +19,13 @@ Poetry
 Docker && docker-compose
 Make (opcional, mas recomendado)
 ```
+
+## Ambiente de Desenvolvimento
+
+O projeto pode ser executado de duas maneiras:
+
+1. **Localmente com Poetry**: Ideal para desenvolvimento rápido e testes
+2. **Com Docker**: Recomendado para garantir consistência entre ambientes
 
 ## Quickstart
 
@@ -82,3 +98,26 @@ Para ver todos os comandos disponíveis, execute:
 ```shell
 make help
 ```
+
+## Estrutura do Projeto
+
+```
+bookstoreapp/
+├── bookstore/          # Configurações principais do Django
+├── books/             # Aplicação principal
+├── tests/             # Testes automatizados
+├── docker/            # Configurações Docker
+└── manage.py          # Script de gerenciamento Django
+```
+
+## Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+## Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
