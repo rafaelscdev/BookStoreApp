@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-q-v+es%h&+h@rh7167(e!0bu_-9ha%4lc5$hb8dp^xt$s6!k1e"
+SECRET_KEY = os.environ.get("SECRET_KEY", "g2$y#e-crm_q5*40d8kcp$l5)-*yzmozds9w4tb)f1gwkbj5")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'bookstoreapp-api-e092b84d0bc6.herokuapp.com']
 
@@ -159,6 +159,6 @@ REST_FRAMEWORK = {
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
