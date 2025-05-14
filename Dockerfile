@@ -52,5 +52,8 @@ COPY . /usr/src/app/
 ENV PORT=8000
 EXPOSE $PORT
 
+# Coleta os arquivos estáticos
+RUN poetry run python manage.py collectstatic --noinput
+
 # Comando para rodar a aplicação
 CMD poetry run gunicorn bookstoreapp.wsgi:application --bind 0.0.0.0:$PORT
