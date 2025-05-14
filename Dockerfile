@@ -43,6 +43,8 @@ RUN apt-get update \
         default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
+RUN poetry run pip install django
+
 # Install poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
