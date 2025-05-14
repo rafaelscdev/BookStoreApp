@@ -68,4 +68,4 @@ ENV PORT=8000
 EXPOSE $PORT
 
 # Command to run the application
-CMD gunicorn bookstoreapp.wsgi:application --bind 0.0.0.0:$PORT
+CMD poetry run gunicorn bookstoreapp.wsgi:application --bind 0.0.0.0:$PORT
