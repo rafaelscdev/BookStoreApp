@@ -18,6 +18,8 @@ django-debug-toolbar = ">=5.2.0,<6.0.0"
 psycopg2-binary = "^2.9.10"
 gitpython = "^3.1.44"
 mysqlclient = "^2.2.7"
+gunicorn = "^23.0.0"
+whitenoise = "^6.9.0"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.2.0"

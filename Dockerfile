@@ -38,6 +38,9 @@ RUN apt-get update \
         build-essential \
         libpq-dev \
         gcc \
+        pkg-config \
+        default-libmysqlclient-dev \
+        default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Install poetry
@@ -60,6 +63,9 @@ WORKDIR /usr/src/app
 
 COPY . /usr/src/app/
 
-EXPOSE 8000
+# Expose the port the app runs on
+ENV PORT=8000
+EXPOSE $PORT
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Command to run the application
+CMD gunicorn bookstoreapp.wsgi:application --bind 0.0.0.0:$PORT
