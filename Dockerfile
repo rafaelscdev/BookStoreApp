@@ -1,37 +1,23 @@
-# `python-base` sets up all our shared environment variables
+# Usa uma imagem base enxuta do Python
 FROM python:3.12-slim as python-base
 
-    # python
+# Variáveis de ambiente para Python, pip e Poetry
 ENV PYTHONUNBUFFERED=1 \
-    # prevents python creating .pyc files
     PYTHONDONTWRITEBYTECODE=1 \
-    \
-    # pip
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100 \
-    \
-    # poetry
-    # https://python-poetry.org/docs/configuration/#using-environment-variables
     POETRY_VERSION=1.7.1 \
-    # make poetry install to this location
     POETRY_HOME="/opt/poetry" \
-    # make poetry create the virtual environment in the project's root
-    # it gets named `.venv`
     POETRY_VIRTUALENVS_IN_PROJECT=true \
-    # do not ask any interactive question
     POETRY_NO_INTERACTION=1 \
-    \
-    # paths
-    # this is where our requirements + virtual environment will live
     PYSETUP_PATH="/opt/pysetup" \
     VENV_PATH="/opt/pysetup/.venv"
 
-
-# prepend poetry and venv to path
+# Adiciona o Poetry e o venv ao PATH
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
-# Install system dependencies
+# Instala dependências do sistema
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
         curl \
@@ -43,31 +29,28 @@ RUN apt-get update \
         default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
-RUN poetry run pip install django
-
-# Install poetry
+# Instala o Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
 
-# Install psycopg2
+# Instala o psycopg2 (caso use Postgres)
 RUN apt-get update \
     && apt-get install libpq-dev gcc \
     && pip install psycopg2
 
-
-# Copy project requirement files
+# Copia os arquivos de dependências do projeto
 WORKDIR $PYSETUP_PATH
 COPY poetry.lock pyproject.toml ./
 
-# Install dependencies
+# Instala as dependências do projeto
 RUN poetry install --no-interaction --no-ansi --no-root
 
+# Copia o restante do código do projeto
 WORKDIR /usr/src/app
-
 COPY . /usr/src/app/
 
-# Expose the port the app runs on
+# Expõe a porta padrão do Django/Heroku
 ENV PORT=8000
 EXPOSE $PORT
 
-# Command to run the application
+# Comando para rodar a aplicação
 CMD poetry run gunicorn bookstoreapp.wsgi:application --bind 0.0.0.0:$PORT
